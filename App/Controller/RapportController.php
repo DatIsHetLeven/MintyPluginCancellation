@@ -14,8 +14,7 @@ class RapportController
 
 
     function fc_order_status_reports( $statuses ) {
-	$statuses[] = 'waiting-call';
-
-	return $statuses;
+	    $statuses[] = 'waiting-call';
+	    return $statuses;
     }
 }

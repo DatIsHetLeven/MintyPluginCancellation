@@ -50,6 +50,7 @@ public function check_cancellation_order( $order_id, $order ){
 public function get_product_net_revenue($orderId )
 {
     global $wpdb;
+
     $order = wc_get_order( $orderId );
 
 //Haal order_id op dmv parent_id (bij deels geannuleerde bestellingen)
@@ -58,6 +59,11 @@ public function get_product_net_revenue($orderId )
         FROM {$wpdb->prefix}wc_order_stats
         WHERE parent_id = %d
     ", $orderId)));
+
+    //CONTROLEREN OF NUM_ITEMS_SOLD = -1 AMDERS LOOPEN DOOR MEERDERE ITEMS!
+    //CONTROLEREN OF NUM_ITEMS_SOLD = -1 AMDERS LOOPEN DOOR MEERDERE ITEMS!
+    //CONTROLEREN OF NUM_ITEMS_SOLD = -1 AMDERS LOOPEN DOOR MEERDERE ITEMS!
+    //CONTROLEREN OF NUM_ITEMS_SOLD = -1 AMDERS LOOPEN DOOR MEERDERE ITEMS!
 
 //Haal productid op dmv order_id
 $product_id = ( (float) $wpdb->get_var( $wpdb->prepare("
@@ -85,7 +91,7 @@ $qty = ( (float) $wpdb->get_var( $wpdb->prepare("
         }
     }
 
-var_dump($product_id. "....." .  $qty);
+var_dump("productid : ".$product_id. "...Aantal : " .  $qty);
 dump($order);
 dd();
 }
