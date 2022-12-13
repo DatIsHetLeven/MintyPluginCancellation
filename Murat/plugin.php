@@ -27,15 +27,17 @@ Domain Path:  /languages
 //TODO ; een nieuwe order status aanmaken -> naam : Gedeeltelijk geretourneerd'
 
 
+//......................................................................................................................
+
 // Register new status
 function register_wait_call_order_status() {
 	register_post_status( 'wc-waiting-call', array(
-		'label'                     => 'Waiting call',
+		'label'                     => 'Deels geannuleerd',
 		'public'                    => true,
 		'show_in_admin_status_list' => true,
 		'show_in_admin_all_list'    => true,
 		'exclude_from_search'       => false,
-		'label_count'               => _n_noop( 'Waiting call (%s)', 'Waiting call (%s)' )
+		'label_count'               => _n_noop( 'Deels geannuleerd (%s)', 'Deels geannuleerd (%s)' )
 	) );
 }
 // Add custom status to order status list
@@ -65,70 +67,125 @@ function QuadLayers_rename_status( $order_statuses ) {
 }
 add_filter( 'wc_order_statuses', 'QuadLayers_rename_status' );
 
+//......................................................................................................................
 
 
 
 
 
+//Als bestelling op geannuleerd gezet wordt -> check of het gedeeltijk geannuleerd is
+add_action( 'woocommerce_process_shop_order_meta', 'check_cancellation_order', 1000000, 2 );
+
+function check_cancellation_order( $order_id, $order ){
+
+	$HeleBestelling = new WC_Order( $order_id );
+
+	//Haal nieuwe status op
+	$newOrderStatus = $_POST["order_status"];
+	//Check of nieuwe stts op geannuleerd staat.
+	if ($newOrderStatus == 'wc-cancelled'){
+		//Haal aantal items uit de bestelling op +  aantal teruggestuurde items.
+		$aantalRefundItems = $HeleBestelling->get_item_count_refunded();
+		$aantalItems = $HeleBestelling->get_item_count();
+	}
+	//if true -> status : Deels geannuleerd
+
+	if ($aantalRefundItems != $aantalItems){
+
+		$totaalBestelling = $HeleBestelling->get_total();
+		$terugbetaald = $HeleBestelling->get_total_refunded();
+		$nettoBetaling = $totaalBestelling - $terugbetaald;
 
 
+		$HeleBestelling->set_total($nettoBetaling);
+		$HeleBestelling->save();
 
-add_action( 'wc-waiting-call', 'wpdesk_set_completed_for_paid_orders' );
-
-function wpdesk_set_completed_for_paid_orders( $order_id ) {
-dd("testetstest");
-	$order = wc_get_order( $order_id );
-	echo "<h1> testttddddddddddddt</h1>";
-	dump($order);
-
+		$HeleBestelling->update_status('wc-waiting-call');
+	}
 }
 
-add_action('init',function(){
-	$order = new WC_Order(23);
+//......................................................................................................................
 
-//Als de order op geannuleerd staat
-	if ($order->get_status() == 'cancelled'){
-		$order = wc_get_order( 23 );
-		$order_refunds = $order->get_refunds();
-		// Loop through the order refunds array
-		foreach( $order_refunds as $refund ){
-			// Loop through the order refund line items
-			foreach( $refund->get_items() as $item_id => $item ){
+add_filter( 'woocommerce_reports_order_statuses', 'fc_order_status_reports', 20, 1);
+function fc_order_status_reports( $statuses ) {
+	$statuses[] = 'waiting-call';
 
-				## --- Using WC_Order_Item_Product methods --- ##
-
-				$refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
-				$refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
-				$ordernaam = $item->get_name();
-				dump($ordernaam);
-				dump($item);
-				dump($refunded_quantity);
-				dump($refunded_line_subtotal);
-				// ... And so on ...
-
-				// Get the original refunded item ID
-				$refunded_item_id       = $item->get_meta('_refunded_item_id'); // line subtotal: zero or negative number
-
-				$order->update_status('wc-waiting-call');
-			}
-		}
+	return $statuses;
+}
 
 
+//......................................................................................................................
 
-		//Check of alle items gean. zijn
-		//pas staus aan naar 'deels-gan. if yes'
-	}
+//add_filter( 'init', 'woocommerce_get_order_statuses', 20, 1);
+//function woocommerce_get_order_statuses() {
+////	return;
+//	$orders = wc_get_orders( array('numberposts' => -1) );
+//
+//// Loop
+////	foreach( $orders as $order ){
+////		if ($order->get_status() == 'waiting-call'){
+////			$orderId = $order->get_id();
+////			echo $orderId;
+////
+////			$order = wc_get_order( $orderId );
+////			$items = $order->get_items();
+////			dump($items);
+////
+////
+////
+////			echo $order->get_status() . '<br>'; // The order status
+////		}
+////
+////	}
+//
+//	$refunds      = array();
+//	$refund_items = get_posts( array(
+//		'post_type'      => 'shop_order_refund',
+//		'posts_per_page' => -1,
+//		'post_status'    => 'any',
+//		'fields'         => 'ids'
+//	) );
+//
+//
+////
+//	foreach ( $refund_items as $refund_id ) {
+//		$refund = new WC_Order_Refund( $refund_id );
+//
+//		dump($refund);
+//		dd();
+//	}
+//
+//// Get all items from a specific refund
+//	$refund_items = get_posts( array(
+//		'post_type'   => 'shop_order_refund',
+//		'post_parent' => 513, // order ID
+//		'post_status' => 'any',
+//	) );
+//
+//	foreach ( $refund_items as $refund_id ) {
+//		$refund = new WC_Order_Refund( $refund_id );
+//		dump($refund);
+//		error_log( print_r ( $refund->get_items(), 1 ) );
+//	}
+//	dd();
+//
+//}
 
-	if ($order->get_status() == 'waiting-call'){
-		echo "<h1>dddhdhjgdjhgdhkdgdhgh</h1>";
-	}
-	else{
-		echo "<h1>nenenenenenenenenenenenenenenne</h1>";
-	}
 
 
 
+add_filter( 'init', 'get_product_net_revenue', 20, 1);
+function get_product_net_revenue( ) {
+    dd("ffffddddff");
+	global $wpdb;
+	$product_id =59;
 
-//	$order->update_status('wc-waiting-call');
-});
+	dd( (float) $wpdb->get_var( $wpdb->prepare("
+        SELECT SUM(product_net_revenue)
+        FROM {$wpdb->prefix}wc_order_product_lookup
+        WHERE order_id = %d
+    ",$product_id ) ));
+}
+
+
 
