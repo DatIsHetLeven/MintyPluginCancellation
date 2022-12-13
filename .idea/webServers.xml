@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="4ae9a1eb-3453-47a0-bd6e-7c03bd762491" name="myio" url="http://myio.nl">
+        <fileTransfer rootFolder="/subdomains/woocommerceshop/wp-content/plugins/MintyPluginCancellation" host="myio.nl" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

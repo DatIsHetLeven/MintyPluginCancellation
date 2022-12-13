@@ -1,0 +1,17 @@
+{
+  "name": "mintymedia/Cancellation",
+  "description": "Koppeling voor half geretourneerde bestellingen",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "autoload": {
+    "psr-4": {
+      "MintyMedia\\Cancellation\\": "App/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Minty Media",
+      "email": "info@mintymedia.nl"
+    }
+  ]
+}
