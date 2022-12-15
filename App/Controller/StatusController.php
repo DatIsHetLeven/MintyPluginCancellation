@@ -19,10 +19,10 @@ class StatusController
     {
         register_post_status('wc-waiting-call', array(
             'label' => 'Deels geannuleerd',
-            'public' => true,
+            'public' => false,
+            'exclude_from_search' => false,
             'show_in_admin_status_list' => true,
             'show_in_admin_all_list' => true,
-            'exclude_from_search' => false,
             'label_count' => _n_noop('Deels geannuleerd (%s)', 'Deels geannuleerd (%s)')
         ));
     }

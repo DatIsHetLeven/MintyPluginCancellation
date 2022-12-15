@@ -15,7 +15,7 @@ class CancellationBase
     private array $controllers = [
         StatusController::class,
         OrderController::class,
-//        RapportController::class,
+        RapportController::class,
     ];
 
     public function __construct () {
