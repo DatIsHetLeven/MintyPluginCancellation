@@ -122,15 +122,18 @@ class OrderController
                 {
                     if (in_array($item->get_product_id(), $ArrayRefund))
                     {
+
                         $item->update_meta_data('ProductId', $result[$x]->product_id);
 
-                        $item->update_meta_data('QtyRefunded', $result[$x]->product_qty);
+                        $item->update_meta_data('QtyRefunded', ($result[$x]->product_qty * -1));
                         $item->save();
                         $x++;
                     }
                 }
             }
-            dd();
+
         }
+        dd();
+
     }
 }
