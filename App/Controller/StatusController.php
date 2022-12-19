@@ -8,9 +8,13 @@ class StatusController
 {
     public function init()
     {
+
+
         add_action('init', [$this, 'register_wait_call_order_status']);
         add_filter('wc_order_statuses', [$this, 'add_wait_call_to_order_statuses']);
         add_filter('wc_order_statuses', [$this, 'QuadLayers_rename_status']);
+
+        add_filter('woocommerce_order_is_paid_statuses', [$this,'delivered_woocommerce_order_is_paid_statuses']);
     }
 
 
@@ -19,7 +23,7 @@ class StatusController
     {
         register_post_status('wc-waiting-call', array(
             'label' => 'Deels geannuleerd',
-            'public' => false,
+            'public' => true,
             'exclude_from_search' => false,
             'show_in_admin_status_list' => true,
             'show_in_admin_all_list' => true,
@@ -56,4 +60,10 @@ class StatusController
 
 
 //......................................................................................................................
-}
+
+
+    function delivered_woocommerce_order_is_paid_statuses($statuses)
+    {
+        $statuses[] = 'waiting-call';
+        return $statuses;
+    }}

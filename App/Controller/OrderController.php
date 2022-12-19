@@ -15,7 +15,6 @@ class OrderController
 //Als bestelling op geannuleerd gezet wordt -> check of het gedeeltijk geannuleerd is
     public function check_cancellation_order($order_id, $order)
     {
-
         //Haal de gehele order op
         $HeleBestelling = wc_get_order($order_id);
 
@@ -30,6 +29,7 @@ class OrderController
         }
         //if true -> status : Deels geannuleerd
         if ($aantalRefundItems != $aantalItems) {
+
 
 
 
@@ -78,8 +78,8 @@ class OrderController
             dump($totalRefund);
 //            dd();
 
-            $HeleBestelling->set_total($newAmount);
-            $HeleBestelling->save();
+//            $HeleBestelling->set_total($newAmount);
+//            $HeleBestelling->save();
 
 
             $HeleBestelling->update_status('waiting-call');
@@ -96,12 +96,12 @@ class OrderController
         global $wpdb;
         $order = wc_get_order($orderId);
 
-//Haal order_id op dmv parent_id (bij deels geannuleerde bestellingen)
+        //Haal order_id op dmv parent_id (bij deels geannuleerde bestellingen)
         $order_id = ((float)$wpdb->get_var($wpdb->prepare("
         SELECT SUM(order_id)
         FROM {$wpdb->prefix}wc_order_stats
         WHERE parent_id = %d
-    ", $orderId)));
+        ", $orderId)));
 
         //Haal alle proudct gegevens op van de geretourneerde items!
         $sql = "SELECT * FROM `wp_wc_order_product_lookup` WHERE `order_id` = '$order_id'";
@@ -118,7 +118,6 @@ class OrderController
             //Update meta data
             for ($x = 0; $x < count($result); $x++)
             {
-
                 foreach ($order->get_items() as $item_id => $item)
                 {
                     if (in_array($item->get_product_id(), $ArrayRefund))
@@ -128,7 +127,6 @@ class OrderController
                         $item->update_meta_data('QtyRefunded', $result[$x]->product_qty);
                         $item->save();
                         $x++;
-
                     }
                 }
             }

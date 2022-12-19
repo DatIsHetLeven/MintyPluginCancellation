@@ -15,8 +15,9 @@ class RapportController
 
 
     function fc_order_status_reports( $statuses ) {
-        $statuses[] = 'waiting-call';
 
-        return $statuses;
+        return array( 'processing', 'in-progress', 'completed', 'on-hold','waiting-call');
+//        dd($statuses);
+//        return $statuses;
     }
 }
