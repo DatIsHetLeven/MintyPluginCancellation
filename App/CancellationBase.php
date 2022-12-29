@@ -24,7 +24,7 @@ class CancellationBase
 //            if ( !class_exists( $controller ) ) {
             (new $controller($StatusController))->init();
 //            } else {
-//                echo 'not running';
+//                echo 'not ;running'
 //            }
         }
     }
